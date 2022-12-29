@@ -15,8 +15,8 @@ root.rowconfigure(0, weight=1)
 root.columnconfigure(0, weight=1)
 root.state("zoomed")
 
-dbUser = "MYSQL_USERNAME"        #MySQL username
-dbPasswd = "MYSQL_PASSWORD"   #MySQL password
+dbUser = "MYSQL_USERNAME"        #This variable stores your MySQL username
+dbPasswd = "MYSQL_PASSWORD"   #This variable stores your MySQL password
 programImagesDir = "C:/Users/PC/Desktop/meal_program/"  #This variable id used to store the direcotry that the image folder is in
 
 
@@ -3419,7 +3419,7 @@ def resizeFunc():       #This function is responsible for resizing the widgets t
 
         for calendarPgBtnArrayIndex in range (0, int( maxDaysForCalendarPage)):
             calendarPageBtnArray[calendarPgBtnArrayIndex].grid(padx=int(7 * scaleValue), pady=int(10 * scaleValue))
-            calendarPageBtnArray[calendarPgBtnArrayIndex].config(font=("Bahnschrift Light", int(19 * scaleValue)))
+            calendarPageBtnArray[calendarPgBtnArrayIndex].config(font=("Times New Roman", int(19 * scaleValue)))
 
         
     elif CURRENT_CHILD_FRAME == 2:    #If true this scales all the widgets on childFrame2 to the window width
