@@ -15,8 +15,9 @@ root.rowconfigure(0, weight=1)
 root.columnconfigure(0, weight=1)
 root.state("zoomed")
 
-db_user = "MYSQL_USERNAME"        #Enter your MySQL username here
-db_passwd = "MYSQL_PASSWORD"   #Enter your MySQL password here
+dbUser = "MYSQL_USERNAME"        #MySQL username
+dbPasswd = "MYSQL_PASSWORD"   #MySQL password
+programImagesDir = "C:/Users/PC/Desktop/meal_program/"  #This variable id used to store the direcotry that the image folder is in
 
 
 #Load data from the database for page 1
@@ -32,7 +33,7 @@ addMealCurrentRoot = None   #This variable is used to keep a reference to the ne
 
 def readDBQuery(queryString):       #This function is used to read from the database
     try:
-        mydb = connect(host="localhost", user = db_user, password = db_passwd, database="meal_db")
+        mydb = connect(host="localhost", user = dbUser, password = dbPasswd, database="meal_db")
         with mydb as connection:
             with connection.cursor() as cursor:
                 cursor.execute(queryString)
@@ -44,7 +45,7 @@ def readDBQuery(queryString):       #This function is used to read from the data
 
 def writeDBQuery(queryString):      #This functions is used to write to the database
     try:
-        mydb = connect(host="localhost", user = db_user, password = db_passwd, database="meal_db")
+        mydb = connect(host="localhost", user = dbUser, password = dbPasswd, database="meal_db")
         with mydb as connection:
             with connection.cursor() as cursor:
                 cursor.execute(queryString)
@@ -133,7 +134,7 @@ def readMealFromDBFunc(meal_id):    #This function is used to read all of the in
 
 def manageCharacterLengthFunc(length, instruction_str):
     output_string = ""
-    paragraphArray = instruction_str.split("#")       #Used to split the text where there a break lines in the text
+    paragraphArray = instruction_str.split("^")       #Used to split the text where there a break lines in the text
 
 
     for n in range (0, len(paragraphArray)):
@@ -1007,8 +1008,8 @@ def createMealGuiFunc(statementType, currentMealName, currentMealServings, curre
                                                             allIDs = readDBQuery('SELECT id FROM meals ORDER BY id ASC;')
 
                                                             #Replaces any breaklines with a hash symbol
-                                                            instructionsVar = instructionsVar.replace("\n", "#")
-                                                            #instructionsVar = instructionsVar.replace("##", "#")
+                                                            instructionsVar = instructionsVar.replace("\n", "^")
+                                                            #instructionsVar = instructionsVar.replace("^^", "^")
 
                                                             if statementType == 0:
                                                                 #This if statement checks if the number of rows in the
@@ -1034,19 +1035,23 @@ def createMealGuiFunc(statementType, currentMealName, currentMealServings, curre
                                                             #if the window has been create for adding a new meal or for
                                                             #editing an existing meal
                                                             if statementType == 0:                                                            
-                                                                insertMealQuery = 'INSERT INTO meals (id, name, num_servings,'
-                                                                + ' instructions, img_dir) VALUES '
-                                                                mealString = '(' + str(mealID) + ', "' + str(mealDBName) + '", '
+                                                                insertMealQuery = ('INSERT INTO meals (id, name, num_servings,'
+                                                                + ' instructions, img_dir) VALUES ')
+                                                                                   
+                                                                mealString = ('(' + str(mealID) + ', "' + str(mealDBName) + '", '
                                                                 + str(numServings) + ', "' + instructionsVar + '", "'
-                                                                + str(imgDir) + '");'
+                                                                + str(imgDir) + '");')
+                                                                
                                                                 insertMealQuery = insertMealQuery + mealString
                                                             elif statementType == 1:
                                                                 insertMealQuery = 'UPDATE meals SET '
-                                                                mealString = 'name = "' + str(mealDBName) + '", num_servings = '
+                                                                
+                                                                mealString = ('name = "' + str(mealDBName) + '", num_servings = '
                                                                 + str(numServings) + ', instructions = "' + instructionsVar
-                                                                + '", img_dir = "' + str(imgDir) + '"'
-                                                                insertMealQuery = insertMealQuery + mealString + 'WHERE id = '
-                                                                + str(currentMealID) + ';'
+                                                                + '", img_dir = "' + str(imgDir) + '"')
+                                                                
+                                                                insertMealQuery = (insertMealQuery + mealString + 'WHERE id = '
+                                                                + str(currentMealID) + ';')
 
                                                             writeDBQuery(insertMealQuery)
 
@@ -1067,8 +1072,8 @@ def createMealGuiFunc(statementType, currentMealName, currentMealServings, curre
                                                             + ' FROM meal_ingredients WHERE meal_id = ' + str(mealID) + ';')
 
 
-                                                            insertIngredientQuery = 'INSERT INTO meal_ingredients (meal_id,'
-                                                            + ' ingredient_id, grams_amount) VALUES ('
+                                                            insertIngredientQuery = ('INSERT INTO meal_ingredients (meal_id,'
+                                                            + ' ingredient_id, grams_amount) VALUES (')
 
                                                             #This is true if it is a new meal been added
                                                             if statementType == 0:
@@ -1637,7 +1642,7 @@ def clickBtn5Func():
     mealInstructionsText = str(result[0][3])    #Reads the meals instructions from the query result
     #Replaces the # with \n so that the instructions has the correct line
     #breaks when displayed in the insructions box of the window
-    mealInstructionsText = mealInstructionsText.replace("#", "\n")
+    mealInstructionsText = mealInstructionsText.replace("^", "\n")
 
     #Reads all of the ingredient values that are in the meal_ingredients array for the given meal
     ingredientsResult = readDBQuery('SELECT ingredient_id, grams_amount FROM meal_ingredients WHERE meal_id = "'
@@ -1796,7 +1801,7 @@ def openCalendarFunc():
     calWindow = Toplevel(root)
     #calWindow.geometry("400x250")
     calWindow.title("Calendar")
-    calWindow.iconbitmap(r"C:\Users\PC\Desktop\meal_program\images\calendar_icon.ico")
+    calWindow.iconbitmap(programImagesDir + r"images\calendar_icon.ico")
     calWindow.rowconfigure(0, weight=1)
     calWindow.columnconfigure(0, weight=1)
 
@@ -2580,10 +2585,10 @@ def mealNumEntryCreateFunc(entryText):
     imgBtnEntryBoxArray.append(mealEntryBox)
     
 
-tickImg1 = Image.open(r"C:\Users\PC\Desktop\meal_program\images\tick_icon_1.jpg")
+tickImg1 = Image.open(programImagesDir + r"images\tick_icon_1.jpg")
 scaled_tick_img1 = ImageTk.PhotoImage(tickImg1.resize((46, 46), Image.Resampling.LANCZOS))
 
-tickImg2 = Image.open(r"C:\Users\PC\Desktop\meal_program\images\tick_icon_2.jpg")
+tickImg2 = Image.open(programImagesDir + r"images\tick_icon_2.jpg")
 scaled_tick_img2 = ImageTk.PhotoImage(tickImg2.resize((46, 46), Image.Resampling.LANCZOS))
 
 #This function decides if the tick button has 1 or a 0 in its text arrtibute and then
@@ -2868,11 +2873,11 @@ def pg3RightArrowBtnFunc():
 
 
 #All of the images that are used for the icons in the nutritional overview for each week
-box_icon_1 = r"C:\Users\PC\Desktop\meal_program\images\rectangle_icon_1.jpg"
-box_icon_2 = r"C:\Users\PC\Desktop\meal_program\images\rectangle_icon_2.jpg"
-box_icon_3 = r"C:\Users\PC\Desktop\meal_program\images\rectangle_icon_3.jpg"
-box_icon_4 = r"C:\Users\PC\Desktop\meal_program\images\rectangle_icon_4.jpg"
-box_icon_5 = r"C:\Users\PC\Desktop\meal_program\images\rectangle_icon_5.jpg"
+box_icon_1 = programImagesDir + r"images\rectangle_icon_1.jpg"
+box_icon_2 = programImagesDir + r"images\rectangle_icon_2.jpg"
+box_icon_3 = programImagesDir + r"images\rectangle_icon_3.jpg"
+box_icon_4 = programImagesDir + r"images\rectangle_icon_4.jpg"
+box_icon_5 = programImagesDir + r"images\rectangle_icon_5.jpg"
 
 temp_icon_img_1 = Image.open(box_icon_1)
 scaled_icon_img_1 = ImageTk.PhotoImage(temp_icon_img_1.resize((15, 15), Image.Resampling.LANCZOS)) #Resizes the image
@@ -3262,7 +3267,7 @@ pg3RightArrowBtn = Button(childFrame3, text=">", command=pg3RightArrowBtnFunc)  
 pg3RightArrowBtn.grid(row= 0, column= 0, sticky="w", padx=(159,0))
 pg3RightArrowBtn.config(font=("Times New Roman", 20))
 
-settings_icon_1 = r"C:\Users\PC\Desktop\meal_program\images\settings_icon.png"
+settings_icon_1 = programImagesDir + r"images/settings_icon.png"
 temp_settings_icon_1 = Image.open(settings_icon_1)
 scaled_settings_icon_1 = ImageTk.PhotoImage(temp_settings_icon_1.resize((15, 15), Image.Resampling.LANCZOS)) #Resizes the image
 
