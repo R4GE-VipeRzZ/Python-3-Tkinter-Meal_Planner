@@ -3,7 +3,7 @@ from mysql.connector import connect, Error
 
 dbUser = "MYSQL_USERNAME"        #MySQL username
 dbPasswd = "MYSQL_PASSWORD"   #MySQL password
-programImagesDir = "C:/Users/PC/Desktop/meal_program/"
+programImagesDir = "C:/Users/PC/Desktop/meal_program/"  #This variable id used to store the direcotry that the image folder is in
 
 def checkTablesFunc(cursor, table_name):
     check_table_query = """
