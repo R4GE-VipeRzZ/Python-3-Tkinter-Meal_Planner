@@ -436,12 +436,12 @@ def createMealGuiFunc(statementType, currentMealName, currentMealServings, curre
                     iron, zinc, copper, selenium)
                     VALUES
                         ("""
-                insert_string = '"'+ ingredientName + '"' + "," + str(isLiquid) + "," + str(energy) + "," + str(fat) + ","
+                insert_string = ('"'+ ingredientName + '"' + "," + str(isLiquid) + "," + str(energy) + "," + str(fat) + ","
                 + str(satFat) + "," + str(carbs) + "," + str(sugar) + "," + str(fibre) + "," + str(protein) + "," + str(salt)
                 + "," + str(vitaminA) + "," + str(thiamin) + "," + str(riboflavin) + "," + str(niacin) + "," +str(vitaminB6)
                 + "," + str(vitaminB12) + "," + str(vitaminC) + "," + str(vitaminD) + "," + str(calcium) + "," + str(phosphorus)
                 + "," + str(magnesium) + "," + str(potassium) + "," + str(iron) + "," + str(zinc) + "," + str(copper)
-                + "," + str(selenium) + ");"
+                + "," + str(selenium) + ");")
 
                 insert_ingredients_query = insert_ingredients_query + insert_string
 
