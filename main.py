@@ -15,8 +15,9 @@ root.rowconfigure(0, weight=1)
 root.columnconfigure(0, weight=1)
 root.state("zoomed")
 
-dbUser = "MYSQL_USERNAME"        #This variable stores your MySQL username
-dbPasswd = "MYSQL_PASSWORD"   #This variable stores your MySQL password
+mysqlLoginCorrect = False
+dbUser = ""        #MySQL username
+dbPasswd = ""   #MySQL password
 programImagesDir = "C:/Users/PC/Desktop/meal_program/"  #This variable id used to store the direcotry that the image folder is in
 
 
@@ -170,8 +171,6 @@ def manageCharacterLengthFunc(length, instruction_str):
     return output_string
 
 
-loadDataMealPgFunc()
-
 #Setup the main frame, canvas, scrollbar and child frames ------------------------------------------------------------------------
 
 #Create a main frame
@@ -204,12 +203,13 @@ childFrame2 = Frame(canvasParentFrame)  #Used as the frame for the Meals page
 childFrame3 = Frame(canvasParentFrame)  #Used as the frame for the analytics page
 childFrame4 = Frame(canvasParentFrame)  #Used as the frame for the individual meal pages
 childFrame5 = Frame(canvasParentFrame)  #Used as the frame for the info about a date on the calendar page
+childFrame6 = Frame(canvasParentFrame)
 
-childFrameArray = [childFrame1, childFrame2, childFrame3, childFrame4, childFrame5]     #This array is used for controlling
-                                                                                        #which childFrame is visible
+childFrameArray = [childFrame1, childFrame2, childFrame3, childFrame4, childFrame5, childFrame6]    #This array is used for controlling
+                                                                                                    #which childFrame is visible
 
-menuFrame.grid(row=0, column=0, sticky="nesw")  #Places the menuFrame in row 0 of the canvasParentFrame
-childFrame1.grid(row=1, column=0, sticky="nesw")    #Places the childFrame1 in row 1 of the canvasParentFrame
+#menuFrame.grid(row=0, column=0, sticky="nesw")  #Places the menuFrame in row 0 of the canvasParentFrame
+#childFrame1.grid(row=1, column=0, sticky="nesw")    #Places the childFrame1 in row 1 of the canvasParentFrame
 
 #Add that new frame to a window in the canvas
 myCanvas.create_window((0,0), window=canvasParentFrame, anchor="nw")    #Adds a window into the top left corner of the
@@ -2277,10 +2277,12 @@ pg1RightArrowBtn.grid(row= 0, column= 0, sticky="e")
 pg1RightArrowBtn.config(font=("Times New Roman", 20))
 
 maxDays = calNumDaysForMonthFunc(int(tempMonthDate[1]), int(tempMonthDate[2]))      #Used to get the number of days in the month
-createNumCalenderPageBtnsFunc(31)         #Creates the 31 button for the calendar on the calendar page
-populateCalendarPageBtnsFunc(maxDays)   #Calls the method responsible for putting the text into the calendar page date buttons
-hideCalendarPageBtnsFunc(maxDays)       #Calls the method that is responsible for hiding and unhiding the
-                                        #calendar page date buttons depending on the number of days in the month
+
+def createCalenderPageFunc():
+    createNumCalenderPageBtnsFunc(31)         #Creates the 31 button for the calendar on the calendar page
+    populateCalendarPageBtnsFunc(maxDays)   #Calls the method responsible for putting the text into the calendar page date buttons
+    hideCalendarPageBtnsFunc(maxDays)       #Calls the method that is responsible for hiding and unhiding the
+                                            #calendar page date buttons depending on the number of days in the month
 #---------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -2451,8 +2453,6 @@ def addStandardBtnsFunc():      #This function adds the default buttonts that ar
     addNewMealBtn.config(font=("Times New Roman", 20))
     saveMealsBtn.grid(row= 0, column= 4, sticky="e", padx=(0,20))
     saveMealsBtn.config(font=("Times New Roman", 20))
-
-addStandardBtnsFunc()
     
 
 imageBtnsArray = []         #Array used to store all of the image buttons so that they can be referenced later on
@@ -2525,7 +2525,6 @@ def imgBtnCreateImageFunc():
         imgBtnCreateFunc(imageBtn)  #The create imgBtn needs to be created using a seperate function so that the click binding
                                     #for the button is linked to each button object and not just the last button that was created
 
-imgBtnCreateImageFunc()
 
 #This function checks if all of the meals are in the meal_nutrition table and if it
 #isn't then it adds the meals nutrition information to the meal_nutrition table
@@ -2547,7 +2546,6 @@ def checkMealNutritionExistsFunc():
         calMealNutritionalInfoFunc(mealIDsArray[j])     #Adds the meal nutritional information per servings
                                                         #for the given meal to the meal_nutrition table
 
-checkMealNutritionExistsFunc()
 
 #This function is responsible for reading all the meals that are currently
 #in the meal_plan table for the date that is currently in the date label
@@ -2613,8 +2611,6 @@ def createInitialTickEntryFunc():
 
         tickBtnCreateFunc(tickText)
         mealNumEntryCreateFunc(entryText)
-
-createInitialTickEntryFunc()        #This is called so that all the ticks and entry boxes are setup on intial loading
 
 #This function is responsible for adding the line breaks to the meals
 #names so that when they are too long that are on multiple lines
@@ -2685,7 +2681,6 @@ def placeMealBtnsFunc():
 
     mealNameLineBreaksFunc()
 
-placeMealBtnsFunc()
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
@@ -3285,8 +3280,6 @@ pg3GenderDropdown = OptionMenu(childFrame3, genderVar, "Male", "Female", command
 pg3GenderDropdown.grid(row= 0, column= 0, sticky="w", padx=(360,0))
 pg3GenderDropdown.config(font=("Times New Roman", 18))
 
-createWeekFrames()
-controlWeekFrameVisibilityFunc()
 #---------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -3309,9 +3302,76 @@ mealInstructionsLabel = Label(childFrame4, justify="left", font=("Times New Roma
 mealInstructionsLabel.grid(row=1, column=1, pady=(20,0), sticky="nw")
 #---------------------------------------------------------------------------------------------------------------------------------
 
+
+
 #ChildFrame5 code ----------------------------------------------------------------------------------------------------------------
 
 #All of the widgets for this ChildFrame are added in the function createMealInfoLabel
+
+#---------------------------------------------------------------------------------------------------------------------------------
+
+
+
+#ChildFrame6 code ----------------------------------------------------------------------------------------------------------------
+
+loginInstructions = Label(childFrame6, text="Please enter your \nMysql Username and Password")
+loginInstructions.grid(row=0, column=1)
+
+incorrectDetailsLabel = Label(childFrame6, text="")
+incorrectDetailsLabel.grid(row=1, column =1)
+
+dbUserNameInputLabel = Label(childFrame6, text="MySQL User Name")
+dbUserNameInputLabel.grid(row=2, column=0)
+dbUserNameInputBox = Entry(childFrame6)
+dbUserNameInputBox.grid(row=2, column=1)
+
+dbPasswordInputLabel = Label(childFrame6, text="MySQL Password")
+dbPasswordInputLabel.grid(row=3, column=0)
+dbPasswordInputBox = Entry(childFrame6)
+dbPasswordInputBox.grid(row=3, column=1)
+
+def loginBtnFunc():
+    global CURRENT_CHILD_FRAME
+    global mysqlLoginCorrect
+    global dbUser
+    global dbPasswd
+    
+    dbUserName = str(dbUserNameInputBox.get())
+    dbPassword = str(dbPasswordInputBox.get())
+
+    try:
+        connect(host="localhost", user = dbUserName, password = dbPassword)
+        mysqlLoginCorrect = True
+        dbUser = dbUserName
+        dbPasswd = dbPassword
+
+        loadDataMealPgFunc()    #This function reads in all of the image directories for all of the meals in the meals table
+        createCalenderPageFunc()    #This function calls the functions that are needed to populate the calender page
+        addStandardBtnsFunc()   #Adds the buttons at the top of the meals page
+        imgBtnCreateImageFunc() #This function opens and scales the image for the meals image button and then
+                                #calls that function that creates the button and passes it the image
+        checkMealNutritionExistsFunc()  #This function checks if all of the meals are in the meal_nutrition table and if it
+                                        #isn't then it adds the meals nutrition information to the meal_nutrition table
+        createInitialTickEntryFunc()        #This is called so that all the ticks and entry boxes are setup on intial loading
+        placeMealBtnsFunc() #This function is responsible for placing all the imgage buttons,
+                            #tick buttons and entry boxes into childFrame2 for the meals page 
+        createWeekFrames()  #This function is responsible for creating all of the labels for each week frame on the analytics page
+        controlWeekFrameVisibilityFunc()    #This function is responsible for controlling which week frames are visible
+                                            #depending on how many weeks there are in the given month
+
+
+        menuFrame.grid(row=0, column=0, sticky="nesw")  #Places the menuFrame in row 0 of the canvasParentFrame     
+        mysqlLoginCorrect = True    #Change to true so that the menuFrame is now resize by the resize func
+        CURRENT_CHILD_FRAME = 2     #Sets the childFrame that will be dislayed 
+        changeChildFrameFunc()      #Changes the childFrame to the one specified in CURRENT_CHILD_FRAME
+    except:
+        print("Username or password incorrect")
+        incorrectDetailsLabel.config(text="Username or password incorrect", fg="red")
+
+
+dbLoginBtn = Button(childFrame6, text="Login", command= loginBtnFunc)
+dbLoginBtn.grid(row=4, column=1)
+
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
@@ -3398,8 +3458,17 @@ def resizeFunc():       #This function is responsible for resizing the widgets t
                                     #accordance with the screen width and underlines the correct buttons text
 
 
-    if int((canvas_width/38.6)) > 17:     #This if statement scales the x padding of the menu frame
-        menuFrame.grid_configure(padx=(int((canvas_width/38.6) - 17),0))
+    if mysqlLoginCorrect == True:      #Stops the resize from addind the menuFrame to the grid if a correct username and password hasn't been entered for mysql
+        if int((canvas_width/38.6)) > 17:     #This if statement scales the x padding of the menu frame
+            menuFrame.grid_configure(padx=(int((canvas_width/38.6) - 17),0))
+    else:       #Scales the widgets in childFrame6 for the mysql login details
+        loginInstructions.config(font=("Times New Roman", int(12 * scaleValue)))
+        incorrectDetailsLabel.config(font=("Times New Roman", int(12 * scaleValue)))
+        dbUserNameInputLabel.config(font=("Times New Roman", int(12 * scaleValue)))
+        dbUserNameInputBox.config(font=("Times New Roman", int(12 * scaleValue)))
+        dbPasswordInputLabel.config(font=("Times New Roman", int(12 * scaleValue)))
+        dbPasswordInputBox.config(font=("Times New Roman", int(12 * scaleValue)))
+        dbLoginBtn.config(font=("Times New Roman", int(12 * scaleValue)))
 
     if int((canvas_width/46)) > 17:       #This if statement scales the x padding of the child frame that is currently visible
         childFrameArray[(CURRENT_CHILD_FRAME - 1)].grid_configure(padx=(int((canvas_width/46) - 17),0))
@@ -3419,7 +3488,7 @@ def resizeFunc():       #This function is responsible for resizing the widgets t
 
         for calendarPgBtnArrayIndex in range (0, int( maxDaysForCalendarPage)):
             calendarPageBtnArray[calendarPgBtnArrayIndex].grid(padx=int(7 * scaleValue), pady=int(10 * scaleValue))
-            calendarPageBtnArray[calendarPgBtnArrayIndex].config(font=("Times New Roman", int(19 * scaleValue)))
+            calendarPageBtnArray[calendarPgBtnArrayIndex].config(font=("Bahnschrift Light", int(19 * scaleValue)))
 
         
     elif CURRENT_CHILD_FRAME == 2:    #If true this scales all the widgets on childFrame2 to the window width
@@ -3612,7 +3681,7 @@ root.bind("<MouseWheel>", mouseWheelScrolled)       #Event that is triggered whe
 
 
 #Set the childFrame that is displayed when the window loads ----------------------------------------------------------------------
-CURRENT_CHILD_FRAME = 2
+CURRENT_CHILD_FRAME = 6
 changeChildFrameFunc()
 #---------------------------------------------------------------------------------------------------------------------------------
 
